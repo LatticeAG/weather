@@ -1,0 +1,24 @@
+{
+  "name": "weather-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Weather \u2014 deterministic fleet observation, anomaly evidence, and corroborated advisory paging (protocol weather/1)",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "test": "npm run build && node --test \"tests/*.test.mjs\"",
+    "test:python": "python3 -m pytest python/tests -q",
+    "check": "tsc -b tsconfig.build.json --force"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "typescript": "5.9.3"
+  }
+}

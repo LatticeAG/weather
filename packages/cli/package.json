@@ -1,0 +1,15 @@
+{
+  "name": "@latticeag/weather-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": { "weather": "./bin/weather" },
+  "exports": { ".": "./dist/index.js" },
+  "scripts": { "build": "tsc -b" },
+  "dependencies": {
+    "@latticeag/weather-core": "0.1.0",
+    "@latticeag/weather-service": "0.1.0",
+    "@latticeag/weather-collectors": "0.1.0"
+  },
+  "engines": { "node": ">=22.5.0" }
+}

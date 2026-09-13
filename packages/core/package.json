@@ -1,0 +1,13 @@
+{
+  "name": "@latticeag/weather-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "weather/1 deterministic core: strict JSON, RFC8785, Ed25519 domains, detectors, replay, verify, eval",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

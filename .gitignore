@@ -1,0 +1,37 @@
+# Coordinator-provided documents and build artifacts — never commit
+SPEC*.md
+*SPEC*.md
+*EXTREME*.md
+PROMPT*.md
+*PROMPT*.md
+REVIEW*.md
+FIX_PROMPT*
+SELFREVIEW*
+SELFREVIEWED*
+DRAFT*
+REPORT.md
+INTERFACES.md
+STATUS*
+*.done
+*.reported
+BUILD_PROMPT.md
+
+# Build outputs and environments
+node_modules/
+dist/
+*.tsbuildinfo
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local runtime state
+state/
+data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.lock
+*.ndjson.tmp
+weather.json
+*.key.json
