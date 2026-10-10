@@ -26,6 +26,14 @@ import { exportEvidence, verifyExport, headExceeds } from "./exporter.js";
 
 const ARGS = process.argv.slice(2);
 
+// A consumer closing the pipe early (`weather audit read | head`, pagers) is
+// not a command failure: exit 0 on EPIPE instead of crashing on the unhandled
+// stream error. Other stdout failures keep the default throw.
+process.stdout.on("error", (e: NodeJS.ErrnoException) => {
+  if (e.code !== "EPIPE") throw e;
+  process.exit(0);
+});
+
 /** Strict flag table: unknown/duplicate flags and missing values exit 2. */
 function flags(spec: Record<string, "value" | "bool">, argv: string[]): { vals: Map<string, string>; bools: Set<string>; pos: string[] } {
   const vals = new Map<string, string>();
