@@ -56,9 +56,15 @@ JSON under Ed25519, and offline verification is pure.
 
 ## Develop
 
+Requires Node.js ≥22.5 and Python ≥3.11 (`requires-python = ">=3.11"` in
+`pyproject.toml`; the system `python3` on Ubuntu 22.04 is 3.10 and pip will
+refuse the install). When the system Python is too old, provision with
+[uv](https://docs.astral.sh/uv/):
+
 ```sh
 npm ci && npm test                 # TypeScript build + 60 vectors + service suite
-python3 -m pytest python/tests -q  # independent Python parity over the same vectors
+uv venv --python 3.12 .venv && uv pip install -e ".[test]" --python .venv
+.venv/bin/python -m pytest python/tests -q  # independent Python parity over the same vectors
 python3 fixtures/generate_rpc_fixtures.py  # §6.2 canonical RPC examples
 ```
 
@@ -75,3 +81,35 @@ weather alerts list --json
 weather export --out evidence.ndjson             # checkpoint-pinned bundle
 weather verify evidence.ndjson --trust trust.json --json
 ```
+
+`config apply` enforces two server-side invariants, so a static config file
+cannot be applied blindly — first applies are rejected `INVALID_INPUT`
+(`effective_ms must be …`) / `PACK_UNAVAILABLE` otherwise:
+
+- **`effective_ms`** must be exactly the fleet logical clock's next 60 s
+  window boundary: `(logical_ms / 60000) * 60000 + 60000`, where `logical_ms`
+  is wall-clock driven and readable via `weather fleet get --json`. For a
+  fresh fleet this is simply the next wall-minute boundary:
+
+  ```sh
+  EFFECTIVE_MS=$(( ($(date +%s%3N) / 60000) * 60000 + 60000 ))
+  ```
+
+- **`pack_digest`** must equal the digest the server computed at startup over
+  the *built* core dist files (see `computePackDigest` in
+  `packages/cli/src/main.ts` — it changes whenever the source is rebuilt).
+  Reproduce it from the same tree:
+
+  ```sh
+  PACK_DIGEST=$(node --input-type=module -e '
+  import { artifactDigest } from "./packages/core/dist/index.js";
+  import { readFileSync } from "node:fs";
+  import { createHash } from "node:crypto";
+  import { join } from "node:path";
+  const dir = "packages/core/dist";
+  const files = ["index.js","schema.js","jcs.js","hash.js","ed25519.js","detectors.js","kernels.js","window.js","replay.js","verify.js","eval.js","pack.js","usage.js","types.js","errors.js","base64.js","ids.js","json.js"];
+  console.log(artifactDigest(files.map(p => ({ path: p, sha256: createHash("sha256").update(readFileSync(join(dir, p))).digest("hex") }))));
+  ')
+  ```
+
+Set both fields in `fleet-config.json` before `config lint|sign|apply`.
