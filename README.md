@@ -62,6 +62,12 @@ python3 -m pytest python/tests -q  # independent Python parity over the same vec
 python3 fixtures/generate_rpc_fixtures.py  # §6.2 canonical RPC examples
 ```
 
+Python package metadata lives at the repository root, not in `python/`. From
+that root, install the package and test dependencies in a virtual environment
+with `python3 -m pip install -e '.[test]'`. The pytest command above also runs
+from the root without an editable install when the dependencies are available;
+`python3 -m pytest -q` uses the same configured test path.
+
 ## Local smoke test
 
 After `npm ci && npm run build`, run `node scripts/smoke-local.mjs` from
