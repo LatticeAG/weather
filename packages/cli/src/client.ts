@@ -58,13 +58,19 @@ export class Client {
     try { parsed = parseBytes(raw); }
     catch { throw new CliError(7, `unparseable response (HTTP ${res.status})`); }
     const r = parsed as { ok?: boolean; result?: unknown; error?: { code?: Code; retryable?: boolean } };
+    const rpcError = (code: Code): CliError => {
+      const hint = code === "UNAUTHORIZED"
+        ? "; check the fleet ID, principal key binding, and request signature"
+        : code === "FORBIDDEN" ? "; check the principal has the required role for this method" : "";
+      return new CliError(exitCodeFor(code), `RPC ${code}${hint}`, code);
+    };
     if (r && typeof r === "object" && "ok" in r) {
       if (r.ok === true) return r.result;
       const code = r.error?.code ?? "INVALID_INPUT";
-      throw new CliError(exitCodeFor(code), `RPC ${code}`);
+      throw rpcError(code);
     }
     const bare = (r as { error?: { code?: Code } })?.error?.code;
-    if (bare) throw new CliError(exitCodeFor(bare), `RPC ${bare}`);
+    if (bare) throw rpcError(bare);
     throw new CliError(7, `malformed response (HTTP ${res.status})`);
   }
 }

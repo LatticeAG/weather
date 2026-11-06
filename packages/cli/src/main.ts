@@ -421,7 +421,7 @@ async function cmdEval(argv: string[]): Promise<number> {
 main().then((code) => { process.exitCode = code; })
   .catch((e) => {
     if (e instanceof CliError) {
-      process.stderr.write(`weather: ${e.message}\n`);
+      process.stderr.write(JSON_MODE ? jstr({ error: { code: e.rpcCode ?? "CLI_ERROR", message: e.message } }) + "\n" : `weather: ${e.message}\n`);
       process.exitCode = e.code;
     } else if (e && typeof e === "object" && "code" in e) {
       const code = (e as { code: Parameters<typeof exitCodeFor>[0] }).code;

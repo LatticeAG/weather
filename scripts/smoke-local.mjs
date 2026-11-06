@@ -23,7 +23,7 @@ try {
   const fleet = 'wfl_FFFFFFFFFFFFFFFFFFFFF';
   write('bootstrap.json', { v: 1, fleets: [{ fleet, root: pin('root'), audit: pin('audit'), allowed_view_origin: null, primary_url: null }] });
   write('trust.json', { v: 1, fleet, root: pin('root'), audit: pin('audit'), minimum_head: null });
-  write('client.json', { v: 1, endpoint: `http://127.0.0.1:${port}`, fleet, principal_key_file: file('root-key.json'), trust_file: file('trust.json'), timeout_ms: 2000 });
+  write('client.json', { v: 1, endpoint: `http://127.0.0.1:${port}`, fleet, principal_key_file: file(process.env.WEATHER_SMOKE_UNBOUND ? 'operator-key.json' : 'root-key.json'), trust_file: file('trust.json'), timeout_ms: 2000 });
   const pairs = readFileSync('fixtures/rpc_pairs.jsonl', 'utf8').trim().split('\n').map(JSON.parse);
   const config = pairs.find(p => p.request.body.method === 'config.put').request.body.params.config.body;
   const files = ['index.js', 'schema.js', 'jcs.js', 'hash.js', 'ed25519.js', 'detectors.js', 'kernels.js', 'window.js', 'replay.js', 'verify.js', 'eval.js', 'pack.js', 'usage.js', 'types.js', 'errors.js', 'base64.js', 'ids.js', 'json.js'];

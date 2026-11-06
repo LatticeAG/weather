@@ -69,6 +69,9 @@ the repository root. It generates temporary root, audit, and operator keys,
 bootstrap, trust, client, and fleet configuration files; starts a local server;
 and runs config lint/sign/apply and fleet get. It removes the keys and state
 on exit. Set `WEATHER_SMOKE_PORT` to use a different local port (default 18787).
+The bootstrap root key can call `fleet get` and apply the first config. Other
+client keys must be bound in the fleet config and have the role required by
+the RPC; check the configured fleet ID and key if authentication fails.
 The configuration activates at the next minute boundary. These generated
 credentials and the sample configuration are for local testing only.
 

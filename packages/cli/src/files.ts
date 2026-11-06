@@ -7,7 +7,7 @@ import type { ClientConfig, TrustFile, PrivateKeyFile, Pin, Head } from "@lattic
 /** Strict local file IO: no-follow, owner-only private keys, exclusive create. */
 
 export class CliError extends Error {
-  constructor(readonly code: number, msg: string) { super(msg); this.name = "CliError"; }
+  constructor(readonly code: number, msg: string, readonly rpcCode?: string) { super(msg); this.name = "CliError"; }
 }
 
 export function loadJson<T>(path: string, what: string): T {
