@@ -62,7 +62,29 @@ python3 -m pytest python/tests -q  # independent Python parity over the same vec
 python3 fixtures/generate_rpc_fixtures.py  # §6.2 canonical RPC examples
 ```
 
-## Smoke sketch
+From the repository root, install the package and test dependencies in a virtual
+environment with `python3 -m pip install -e '.[test]'`. The package can also be
+installed with `python3 -m pip install -e python/`. The pytest command above also runs
+from the root without an editable install when the dependencies are available;
+`python3 -m pytest -q` uses the same configured test path.
+
+## Local smoke test
+
+After `npm ci && npm run build`, run `node scripts/smoke-local.mjs` from
+the repository root. It generates temporary root, audit, and operator keys,
+bootstrap, trust, client, and fleet configuration files; starts a local server;
+and runs config lint/sign/apply and fleet get. It removes the keys and state
+on exit. Set `WEATHER_SMOKE_PORT` to use a different local port (default 18787).
+The bootstrap root key can call `fleet get` and apply the first config. Other
+client keys must be bound in the fleet config and have the role required by
+the RPC; check the configured fleet ID and key if authentication fails.
+The configuration activates at the next minute boundary. These generated
+credentials and the sample configuration are for local testing only.
+
+## Further smoke sketch
+
+The following commands illustrate additional operations; they require a running
+server, a client configuration, and signed input and trust files of your own.
 
 ```sh
 weather keygen --out op-key.json --public-out op-pub.json
